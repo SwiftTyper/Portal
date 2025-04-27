@@ -41,7 +41,7 @@ public struct PortalContainer<Content: View>: View {
             .onAppear {
                 setupWindow(scene)
             }
-            .onChange(of: scene) { newValue in
+            .onChangeCompat(of: scene) { newValue in
                 setupWindow(newValue)
             }
             .environmentObject(portalModel)
@@ -122,6 +122,7 @@ final class OverlayWindowManager {
                 root.view.frame = windowScene.screen.bounds
 
                 window.rootViewController = root
+                guard self.overlayWindow == nil else { return }
                 self.overlayWindow = window
                 break
             }
