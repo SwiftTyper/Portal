@@ -51,8 +51,11 @@
 - **`.portalDestination(id:)`**  
   Marks a view as the destination anchor for portal transitions.
 
-- **`.portalTransition(id: animate: animation: animationDuration: delay: layer: completion:)`**  
+- **`.portalTransition(id: isActive: animation: animationDuration: delay: layer: completion:)`**  
   Drives the floating overlay animation, with options for animation type, duration, delay, layering, and completion handling.
+
+- **`.portalTransition(id: item: animation: animationDuration: delay: layer: layerView: completion:)`** 
+  Drives the floating overlay animation, triggered by the presence of an optional `Identifiable` item. Requires a matching `id` with `.portalSource` and `.portalDestination`. Provides options for animation type, duration, delay, the view to animate (`layerView`), layering, and completion handling.
 
 - **No custom presentation modifiers required**  
   Works directly with standard SwiftUI views.

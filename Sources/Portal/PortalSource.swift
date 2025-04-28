@@ -23,13 +23,13 @@ public struct PortalSource<Content: View>: View {
         content
             .opacity(opacity)
             .anchorPreference(key: AnchorKey.self, value: .bounds) { anchor in
-                if let idx = index, portalModel.info[idx].isActive {
+                if let idx = index, portalModel.info[idx].initalized {
                     return [id: anchor]
                 }
                 return [:]
             }
             .onPreferenceChange(AnchorKey.self) { prefs in
-                if let idx = index, portalModel.info[idx].isActive, portalModel.info[idx].sourceAnchor == nil {
+                if let idx = index, portalModel.info[idx].initalized, portalModel.info[idx].sourceAnchor == nil {
                     portalModel.info[idx].sourceAnchor = prefs[id]
                 }
             }

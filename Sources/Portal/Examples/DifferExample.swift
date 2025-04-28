@@ -190,7 +190,7 @@ public struct Portal_DifferExample: View {
 
                 .portalTransition(
                     id: "demo1",
-                    animate: $showDetailRed,
+                    isActive: $showDetailRed,
                     animation: animationExample,
                     animationDuration: animationDuration
                 ) {

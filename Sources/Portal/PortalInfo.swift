@@ -4,7 +4,7 @@ import SwiftUI
 public struct PortalInfo: Identifiable {
     public let id = UUID()
     public let infoID: String
-    public var isActive = false
+    public var initalized = false
     public var layerView: AnyView? = nil
     public var animateView = false
     public var animationDuration: TimeInterval = 0.55

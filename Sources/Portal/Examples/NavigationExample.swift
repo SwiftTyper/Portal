@@ -129,7 +129,7 @@ public struct Portal_NavigationExample: View {
                 // MARK: – 6) portal transitions remain exactly the same
                 .portalTransition(
                     id: "demo1",
-                    animate: isShowingRed,
+                    isActive: isShowingRed,
                     animation: animationExample,
                     animationDuration: animationDuration
                 ) {
@@ -149,7 +149,7 @@ public struct Portal_NavigationExample: View {
             
             .portalTransition(
                 id: "demo2",
-                animate: isShowingPurple,
+                isActive: isShowingPurple,
                 animation: animationExample,
                 animationDuration: animationDuration
             ) {

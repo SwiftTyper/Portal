@@ -200,7 +200,7 @@ public struct Portal_SheetExample: View {
                 // Transition for first square (red)
                 .portalTransition(
                     id: "demo1",
-                    animate: $showDetailRed,
+                    isActive: $showDetailRed,
                     animation: animationExample,
                     animationDuration: animationDuration
                 ) {
@@ -219,7 +219,7 @@ public struct Portal_SheetExample: View {
                 // Transition for second square (purple)
                 .portalTransition(
                     id: "demo2",
-                    animate: $showDetailPurple,
+                    isActive: $showDetailPurple,
                     animation: animationExample,
                     animationDuration: animationDuration
                 ) {
@@ -239,7 +239,6 @@ public struct Portal_SheetExample: View {
         }
     }
 }
-#endif
 
 struct AnimatedLayer<Content: View>: View {
     @EnvironmentObject private var portalModel: CrossModel
@@ -287,3 +286,5 @@ struct AnimatedLayer<Content: View>: View {
             )
     }
 }
+
+#endif
