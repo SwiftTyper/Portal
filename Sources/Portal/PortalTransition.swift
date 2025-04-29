@@ -114,7 +114,7 @@ public struct OptionalPortalTransitionModifier<Item: Identifiable, LayerView: Vi
     public let animation: Animation
     public let animationDuration: TimeInterval
     public let delay: TimeInterval
-    public let layer: portalLayer
+    private let layer: portalLayer = .above
     public let layerView: (Item) -> LayerView
     public let completion: (Bool) -> Void
     
@@ -128,7 +128,7 @@ public struct OptionalPortalTransitionModifier<Item: Identifiable, LayerView: Vi
         animation: Animation = .bouncy(duration: 0.3),
         animationDuration: TimeInterval = 0.3,
         delay: TimeInterval = 0.06,
-        layer: portalLayer = .above,
+//        layer: portalLayer = .above,
         layerView: @escaping (Item) -> LayerView,
         completion: @escaping (Bool) -> Void = { _ in }
     ) {
@@ -139,7 +139,7 @@ public struct OptionalPortalTransitionModifier<Item: Identifiable, LayerView: Vi
         self.animation = animation
         self.animationDuration = animationDuration
         self.delay = delay
-        self.layer = layer
+//        self.layer = layer
         self.layerView = layerView
         self.completion = completion
     }
@@ -291,7 +291,7 @@ internal struct ConditionalPortalTransitionModifier<LayerView: View>: ViewModifi
     public let animation: Animation
     public let animationDuration: TimeInterval
     public let delay: TimeInterval
-    public let layer: portalLayer
+    private let layer: portalLayer = .above
     public let layerView: () -> LayerView
     public let completion: (Bool) -> Void
     
@@ -306,7 +306,7 @@ internal struct ConditionalPortalTransitionModifier<LayerView: View>: ViewModifi
         animation: Animation = .bouncy(duration: 0.3),
         animationDuration: TimeInterval = 0.3,
         delay: TimeInterval = 0.06,
-        layer: portalLayer = .above,
+//        layer: portalLayer = .above,
         layerView: @escaping () -> LayerView, // No-argument closure
         completion: @escaping (Bool) -> Void = { _ in }
     ) {
@@ -317,7 +317,7 @@ internal struct ConditionalPortalTransitionModifier<LayerView: View>: ViewModifi
         self.animation = animation
         self.animationDuration = animationDuration
         self.delay = delay
-        self.layer = layer
+//        self.layer = layer
         self.layerView = layerView
         self.completion = completion
     }
@@ -501,7 +501,7 @@ public extension View {
         animation: Animation = .smooth(duration: 0.42, extraBounce: 0.2),
         animationDuration: TimeInterval = 0.72,
         delay: TimeInterval = 0.06,
-        layer: portalLayer = .above,
+//        layer: portalLayer = .above,
         @ViewBuilder layerView: @escaping () -> LayerView,
         completion: @escaping (Bool) -> Void = { _ in }
     ) -> some View {
@@ -514,7 +514,7 @@ public extension View {
                 animation: animation,
                 animationDuration: animationDuration,
                 delay: delay,
-                layer: layer,
+//                layer: layer,
                 layerView: layerView,
                 completion: completion
             )
@@ -632,7 +632,7 @@ public extension View {
         animation: Animation = .smooth(duration: 0.42, extraBounce: 0.2),
         animationDuration: TimeInterval = 0.72,
         delay: TimeInterval = 0.06,
-        layer: portalLayer = .above,
+//        layer: portalLayer = .above,
         @ViewBuilder layerView: @escaping (Item) -> LayerView,
         completion: @escaping (Bool) -> Void = { _ in }
     ) -> some View {
@@ -645,7 +645,7 @@ public extension View {
                 animation: animation,
                 animationDuration: animationDuration,
                 delay: delay,
-                layer: layer,
+//                layer: layer,
                 layerView: layerView,
                 completion: completion
             )
