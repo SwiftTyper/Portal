@@ -42,6 +42,9 @@ public struct PortalContainer<Content: View>: View {
             .onAppear {
                 setupWindow(scene)
             }
+            .onDisappear() {
+                OverlayWindowManager.shared.removeOverlayWindow()
+            }
             .onChangeCompat(of: scene) { newValue in
                 setupWindow(newValue)
             }
@@ -51,11 +54,13 @@ public struct PortalContainer<Content: View>: View {
     private func setupWindow(_ scenePhase: ScenePhase) {
 #if canImport(UIKit)
         if scenePhase == .active {
+            print("add overlay")
             OverlayWindowManager.shared.addOverlayWindow(
                 with: portalModel,
                 hideStatusBar: hideStatusBar
             )
         } else {
+            print("remove overlay")
             OverlayWindowManager.shared.removeOverlayWindow()
         }
 #endif
@@ -124,7 +129,10 @@ final class OverlayWindowManager {
                 root.view.frame = windowScene.screen.bounds
                 
                 window.rootViewController = root
-                guard self.overlayWindow == nil else { return }
+                guard self.overlayWindow == nil else {
+                    
+                        print("overlayWindow populated, return")
+                    return }
                 self.overlayWindow = window
                 break
             }

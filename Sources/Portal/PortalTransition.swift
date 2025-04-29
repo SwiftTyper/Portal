@@ -1,105 +1,101 @@
 import SwiftUI
 
 public enum portalLayer{
-    case root
+//    case root
     case above
 }
 
-/// Drives the Portal floating layer for a given id, triggered by an optional identifiable item.
+/// Drives the Portal floating layer for a given identifiable `item`.
 ///
-/// Use this view modifier to trigger and control a portal transition animation between
-/// a source and destination view based on the presence of an identifiable item. The modifier
-/// manages the floating overlay layer, animation timing, and transition state for the
-/// specified `id`.
-///
-/// This follows the standard SwiftUI pattern requiring the item to be `Identifiable`.
+/// Use this view modifier to trigger and control a portal transition
+/// animation between a source and destination view based on the presence
+/// of an `Identifiable` item. The modifier manages the floating overlay
+/// layer, animation timing, and transition state keyed by the item's `.id`.
 ///
 /// - Parameters:
-///   - id: A unique string identifier for the portal transition. This should match the `id` used for the corresponding portal source and destination.
-///   - item: A `Binding<Optional<Item>>` where `Item` conforms to `Identifiable`. The transition activates when this binding contains a value and deactivates when it's `nil`.
+///   - item: A `Binding<Optional<Item>>` where `Item` conforms to `Identifiable`.
+///           The transition activates when this binding contains a value and
+///           deactivates when it becomes `nil`.
 ///   - sourceProgress: The progress value representing the source state (default: 0).
 ///   - destinationProgress: The progress value representing the destination state (default: 0).
-///   - animation: The animation to use for the transition (default: `.smooth(duration: 0.42, extraBounce: 0.2)`).
+///   - animation: The animation to use for the transition (default: `.smooth(duration:0.42,extraBounce:0.2)`).
 ///   - animationDuration: The duration of the transition animation (default: 0.72).
-///   - delay: A delay before the animation starts after the item becomes non-nil (default: 0.06).
-///   - layer: Specifies the rendering layer for the transition (e.g., `.above`, `.root`). Default is `.above`.
-///   - layerView: A closure that receives the unwrapped `Item` and returns the `View` content to be animated during the transition.
-///   - completion: An optional closure called when the transition animation finishes. The `Bool` indicates the final state (`true` for active/item present, `false` for inactive/item nil).
-///
-/// Example usage (Transitioning into a Sheet with Boolean):
+///   - delay: A delay before the animation starts after the item becomes non‐nil (default: 0.06).
+///   - layerView: A closure that receives the unwrapped `Item` and returns the
+///                `View` content to animate.
+///   - completion: An optional closure called when the transition animation finishes.
 /// ```swift
-/// // 1. Define the Sheet Content View
-/// struct SettingsSheetView: View {
-///     @Binding var showSheet: Bool // To allow dismissing from within
-///     let portalID: String
+/// // 1. Define Identifiable Item
+/// struct Book: Identifiable {
+///     let id = UUID()
+///     let title: String
+///     let coverImageName: String
+/// }
+///
+/// // 2. Define Detail View (Sheet Content)
+/// struct BookDetailSheet: View {
+///     let book: Book
 ///
 ///     var body: some View {
-///         NavigationView { // Optional: For title/toolbar
-///             VStack {
-///                 HStack {
-///                     Image(systemName: "gearshape.fill")
-///                         .font(.largeTitle)
-///                         // 1a. Mark the destination inside the sheet
-///                         .portalDestination(id: portalID)
-///                     Text("Settings")
-///                         .font(.largeTitle)
-///                 }
-///                 .padding(.top, 40)
-///
-///                 // ... other settings content ...
-///                 Spacer()
-///             }
-///             .toolbar {
-///                 ToolbarItem(placement: .navigationBarLeading) {
-///                     Button("Done") { showSheet = false } // Dismiss sheet
-///                 }
-///             }
+///         VStack {
+///             Image(book.coverImageName)
+///                 .resizable().scaledToFit().frame(height: 300)
+///                 // Mark destination using the item's ID via the helper
+///                 .portalDestination(item: book)
+///             Text(book.title).font(.title)
+///             // ... other details ...
+///             Spacer()
 ///         }
+///         .padding()
 ///     }
 /// }
 ///
-/// // 2. Define the Main View
-/// struct ContentView: View {
-///     @State private var showSettingsSheet: Bool = false
-///     let portalID = "settingsIconTransition"
+/// // 3. Define Main View
+/// struct LibraryView: View {
+///     @State private var selectedBook: Book? = nil
+///     let books: [Book] = [
+///         Book(title: "Whispers of Wind", coverImageName: "cover1"),
+///         Book(title: "City of Shadows", coverImageName: "cover2"),
+///         Book(title: "The Last Ember", coverImageName: "cover3")
+///     ] // Sample data
 ///
 ///     var body: some View {
-///         // 2a. Wrap in PortalContainer
+///         // Wrap relevant hierarchy in PortalContainer
 ///         PortalContainer {
-///             VStack {
-///                 HStack {
-///                     Spacer()
-///                     // 2b. Source View
-///                     Image(systemName: "gearshape.fill")
-///                         .font(.title)
-///                         .padding()
-///                         .portalSource(id: portalID) // Mark source
-///                         .onTapGesture {
-///                             showSettingsSheet = true // Trigger sheet & transition
-///                         }
+///             List {
+///                 ForEach(books) { book in
+///                     HStack {
+///                         Image(book.coverImageName)
+///                             .resizable().scaledToFit().frame(height: 60)
+///                             .cornerRadius(4)
+///                             // Mark source using the item's ID via the helper
+///                             .portalSource(item: book)
+///
+///                         Text(book.title)
+///                         Spacer()
+///                     }
+///                     .contentShape(Rectangle()) // Make entire row tappable
+///                     .onTapGesture {
+///                         selectedBook = book // Set item to trigger sheet/transition
+///                     }
 ///                 }
-///                 Spacer() // Main content area
-///                 Text("Main Content")
-///                 Spacer()
 ///             }
-///             .padding()
-///             // 2c. Apply the sheet modifier using the boolean binding
-///             .sheet(isPresented: $showSettingsSheet) {
-///                 SettingsSheetView(
-///                     showSheet: $showSettingsSheet,
-///                     portalID: portalID
-///                 )
+///             .listStyle(.plain)
+///             // Present sheet using the standard .sheet(item:) modifier
+///             .sheet(item: $selectedBook) { book in
+///                 BookDetailSheet(book: book)
 ///             }
-///             // 2d. Apply the portal transition modifier
+///             // Apply the portal transition modifier, driven by the item binding
 ///             .portalTransition(
-///                 id: portalID,                   // Same ID
-///                 isActive: $showSettingsSheet,   // Boolean binding
-///                 animation: .smooth(duration: 0.5),
-///                 animationDuration: 0.5
-///             ) {
-///                 // 2e. Define the floating layer (what animates)
-///                 Image(systemName: "gearshape.fill")
-///                     .font(.title) // Match source/destination styling
+///                 item: $selectedBook, // Binding to the optional Identifiable item
+///                 animation: .smooth(duration: 0.4, extraBounce: 0.1),
+///                 animationDuration: 0.4
+///             ) { book in
+///                 // Define the floating layer view.
+///                 // This closure receives the unwrapped 'book'.
+///                 Image(book.coverImageName)
+///                     .resizable().scaledToFit()
+///                     .cornerRadius(4)
 ///             }
 ///         }
 ///     }
@@ -107,106 +103,90 @@ public enum portalLayer{
 /// ```
 @available(iOS 15.0, macOS 13.0, *)
 public struct OptionalPortalTransitionModifier<Item: Identifiable, LayerView: View>: ViewModifier {
-    public let id: String
     @Binding public var item: Item?
     public let sourceProgress: CGFloat
     public let destinationProgress: CGFloat
     public let animation: Animation
     public let animationDuration: TimeInterval
     public let delay: TimeInterval
-    private let layer: portalLayer = .above
     public let layerView: (Item) -> LayerView
     public let completion: (Bool) -> Void
-    
+
     @EnvironmentObject private var portalModel: CrossModel
-    
+
+    /// Compute a unique key from the item's `id`
+    private var key: String? {
+        guard let value = item else { return nil }
+        return "\(value.id)"
+    }
+    /// Keep the last‐used string key so deactivation can find the exact entry.
+    @State private var lastKey: String?
+
     public init(
-        id: String,
-        item: Binding<Optional<Item>>,
+        item: Binding<Item?>,
         sourceProgress: CGFloat = 0,
         destinationProgress: CGFloat = 0,
         animation: Animation = .bouncy(duration: 0.3),
         animationDuration: TimeInterval = 0.3,
         delay: TimeInterval = 0.06,
-//        layer: portalLayer = .above,
         layerView: @escaping (Item) -> LayerView,
         completion: @escaping (Bool) -> Void = { _ in }
     ) {
-        self.id = id
         self._item = item
         self.sourceProgress = sourceProgress
         self.destinationProgress = destinationProgress
         self.animation = animation
         self.animationDuration = animationDuration
         self.delay = delay
-//        self.layer = layer
         self.layerView = layerView
         self.completion = completion
     }
-    
-    // Helper to get the correct index based on layer
-    private func findPortalInfoIndex() -> Int? {
-        switch layer {
-        case .above:
-            return portalModel.info.firstIndex { $0.infoID == id }
-        case .root:
-            return portalModel.rootInfo.firstIndex { $0.infoID == id }
-        }
-    }
-    
+
     public func body(content: Content) -> some View {
         content
-            .onAppear {
-                if !portalModel.info.contains(where: { $0.infoID == id }) && layer == .above {
-                    portalModel.info.append(PortalInfo(id: id))
-                }
-                if !portalModel.rootInfo.contains(where: { $0.infoID == id }) && layer == .root {
-                    portalModel.rootInfo.append(PortalInfo(id: id))
-                }
-            }
-            .onChangeCompat(of: item != nil) { hasValue in // Trigger on presence/absence
-                // Find index using helper
-                guard let idx = findPortalInfoIndex() else { return }
-                
-                // Get the correct array based on layer
-                var portalInfoArray: [PortalInfo] {
-                    get {
-                        switch layer {
-                        case .above: return portalModel.info
-                        case .root: return portalModel.rootInfo
+            // React only when `item` changes from nil→non‑nil or vice versa
+            .onChangeCompat(of: item != nil) { hasValue in
+                        if hasValue {
+                            print("item active")
+                            // item just became non‑nil → activate
+                            guard let key = self.key, let unwrapped = item else { return }
+                            // remember exact key for later
+                            lastKey = key
+                            // register once
+                            if portalModel.info.firstIndex(where: { $0.infoID == key }) == nil {
+                                print("reigsterd")
+                                portalModel.info.append(PortalInfo(id: key))
+                            }
+                            guard let idx = portalModel.info.firstIndex(where: { $0.infoID == key }) else { return }
+                            print("configuring..")
+                            // configure
+                            portalModel.info[idx].initalized = true
+                            portalModel.info[idx].animationDuration  = animationDuration
+                            portalModel.info[idx].sourceProgress     = sourceProgress
+                            portalModel.info[idx].destinationProgress = destinationProgress
+                            portalModel.info[idx].completion         = completion
+                            portalModel.info[idx].layerView          = AnyView(layerView(unwrapped))
+                            // fire the animation
+                            print("animating..")
+                            DispatchQueue.main.asyncAfter(deadline: .now() + delay) {
+                                withAnimation(animation) {
+                                    portalModel.info[idx].animateView = true
+                                }
+                            }
+                        } else {
+                            guard let key = lastKey,
+                            let idx = portalModel.info.firstIndex(where: { $0.infoID == key })
+                            else { return }
+                            portalModel.info[idx].hideView = false
+                            withAnimation(animation) {
+                                portalModel.info[idx].animateView = false
+                            }
+                            lastKey = nil
                         }
                     }
-                    set {
-                        switch layer {
-                        case .above: portalModel.info = newValue
-                        case .root: portalModel.rootInfo = newValue
-                        }
-                    }
-                }
-                
-                // Update common properties
-                portalInfoArray[idx].initalized = true
-                portalInfoArray[idx].animationDuration = animationDuration
-                portalInfoArray[idx].sourceProgress = sourceProgress
-                portalInfoArray[idx].destinationProgress = destinationProgress
-                portalInfoArray[idx].completion = completion
-                
-                if hasValue, let unwrappedItem = item {
-                    portalInfoArray[idx].layerView = AnyView(layerView(unwrappedItem))
-                    DispatchQueue.main.asyncAfter(deadline: .now() + delay) {
-                        withAnimation(animation) {
-                            portalInfoArray[idx].animateView = true
-                        }
-                    }
-                } else {
-                    portalInfoArray[idx].hideView = false
-                    withAnimation(animation) {
-                        portalInfoArray[idx].animateView = false
-                    }
-                }
-            }
     }
 }
+
 
 /// Drives the Portal floating layer for a given id.
 ///
@@ -327,22 +307,21 @@ internal struct ConditionalPortalTransitionModifier<LayerView: View>: ViewModifi
         switch layer {
         case .above:
             return portalModel.info.firstIndex { $0.infoID == id }
-        case .root:
-            return portalModel.rootInfo.firstIndex { $0.infoID == id }
-            // Add other cases if portalLayer has more options
+//        case .root:
+//            return portalModel.rootInfo.firstIndex { $0.infoID == id }
         }
     }
     
     public func body(content: Content) -> some View {
         content
             .onAppear {
-                // Registration logic (remains the same)
+                // Registration logic
                 if !portalModel.info.contains(where: { $0.infoID == id }) && layer == .above {
                     portalModel.info.append(PortalInfo(id: id))
                 }
-                if !portalModel.rootInfo.contains(where: { $0.infoID == id }) && layer == .root {
-                    portalModel.rootInfo.append(PortalInfo(id: id))
-                }
+//                if !portalModel.rootInfo.contains(where: { $0.infoID == id }) && layer == .root {
+//                    portalModel.rootInfo.append(PortalInfo(id: id))
+//                }
             }
             .onChangeCompat(of: isActive) { newValue in
                 // Find index using helper
@@ -353,13 +332,13 @@ internal struct ConditionalPortalTransitionModifier<LayerView: View>: ViewModifi
                     get {
                         switch layer {
                         case .above: return portalModel.info
-                        case .root: return portalModel.rootInfo
+//                        case .root: return portalModel.rootInfo
                         }
                     }
                     set {
                         switch layer {
                         case .above: portalModel.info = newValue
-                        case .root: portalModel.rootInfo = newValue
+//                        case .root: portalModel.rootInfo = newValue
                         }
                     }
                 }
@@ -625,30 +604,40 @@ public extension View {
     /// }
     /// ```
     func portalTransition<Item: Identifiable, LayerView: View>(
-        id: String,
-        item: Binding<Optional<Item>>,
-        sourceProgress: CGFloat = 0,
-        destinationProgress: CGFloat = 0,
-        animation: Animation = .smooth(duration: 0.42, extraBounce: 0.2),
-        animationDuration: TimeInterval = 0.72,
-        delay: TimeInterval = 0.06,
-//        layer: portalLayer = .above,
-        @ViewBuilder layerView: @escaping (Item) -> LayerView,
-        completion: @escaping (Bool) -> Void = { _ in }
-    ) -> some View {
-        self.modifier(
-            OptionalPortalTransitionModifier(
-                id: id,
-                item: item,
-                sourceProgress: sourceProgress,
-                destinationProgress: destinationProgress,
-                animation: animation,
-                animationDuration: animationDuration,
-                delay: delay,
-//                layer: layer,
-                layerView: layerView,
-                completion: completion
+            item: Binding<Optional<Item>>,
+            sourceProgress: CGFloat = 0,
+            destinationProgress: CGFloat = 0,
+            animation: Animation = .smooth(duration: 0.42, extraBounce: 0.2),
+            animationDuration: TimeInterval = 0.72,
+            delay: TimeInterval = 0.06,
+            @ViewBuilder layerView: @escaping (Item) -> LayerView,
+            completion: @escaping (Bool) -> Void = { _ in }
+        ) -> some View {
+            self.modifier(
+                OptionalPortalTransitionModifier(
+                    item: item,
+                    sourceProgress: sourceProgress,
+                    destinationProgress: destinationProgress,
+                    animation: animation,
+                    animationDuration: animationDuration,
+                    delay: delay,
+                    layerView: layerView,
+                    completion: completion
+                )
             )
-        )
-    }
+        }
+}
+
+public extension View {
+  /// Marks this view as a portal source for an Identifiable `item`.
+  func portalSource<Item: Identifiable>(item: Item) -> some View {
+    let key = "\(item.id)"
+    return self.portalSource(id: key)
+  }
+
+  /// Marks this view as a portal destination for an Identifiable `item`.
+  func portalDestination<Item: Identifiable>(item: Item) -> some View {
+    let key = "\(item.id)"
+    return self.portalDestination(id: key)
+  }
 }

@@ -63,60 +63,89 @@ public struct Portal_NavigationExample: View {
             NavigationStack(path: $path) {
                 ScrollView {
                     VStack(spacing: 24) {
-                        Text("Portal Transition Demo")
-                            .font(.title).bold()
-                            .padding(.top, 16)
-                        
-                        Text("Tap a shape to push it")
+                        Text("Tap a shape to navigate")
                             .font(.subheadline)
                             .foregroundColor(.secondary)
+                            .padding(.top, 16)
                         
                         HStack(spacing: 30) {
                             // RED source
-                            AnimatedLayer(id: "demo1") {
-                                RoundedRectangle(cornerRadius: 16)
-                                    .fill(
-                                        LinearGradient(
-                                            gradient: .init(colors:
-                                                                useMatchingColors ? redGradient : alt1),
-                                            startPoint: .topLeading,
-                                            endPoint: .bottomTrailing
+                            VStack(spacing: 12) {
+                                AnimatedLayer(id: "demo1") {
+                                    RoundedRectangle(cornerRadius: 16)
+                                        .fill(
+                                            LinearGradient(
+                                                gradient: .init(colors:
+                                                                    useMatchingColors ? redGradient : alt1),
+                                                startPoint: .topLeading,
+                                                endPoint: .bottomTrailing
+                                            )
                                         )
-                                    )
-                            }
-                            .frame(width: 100, height: 100)
-                            .portalSource(id: "demo1")
-                            .onTapGesture {
-                                withAnimation { path.append(.red) }
+                                }
+                                .frame(width: 100, height: 100)
+                                .portalSource(id: "demo1")
+                                .onTapGesture {
+                                    withAnimation { path.append(.red) }
+                                }
+                                .shadow(color: .black.opacity(0.1), radius: 5, x: 0, y: 2)
+                                
+                                Text("Red Shape")
+                                    .font(.caption)
+                                    .fontWeight(.medium)
+                                    .foregroundColor(.secondary)
                             }
                             
                             // PURPLE source
-                            AnimatedLayer(id: "demo2") {
-                                RoundedRectangle(cornerRadius: 16)
-                                    .fill(
-                                        LinearGradient(
-                                            gradient: .init(colors:
-                                                                useMatchingColors ? purpleGradient : alt2),
-                                            startPoint: .topLeading,
-                                            endPoint: .bottomTrailing
+                            VStack(spacing: 12) {
+                                AnimatedLayer(id: "demo2") {
+                                    RoundedRectangle(cornerRadius: 16)
+                                        .fill(
+                                            LinearGradient(
+                                                gradient: .init(colors:
+                                                                    useMatchingColors ? purpleGradient : alt2),
+                                                startPoint: .topLeading,
+                                                endPoint: .bottomTrailing
+                                            )
                                         )
-                                    )
-                            }
-                            .frame(width: 100, height: 100)
-                            .portalSource(id: "demo2")
-                            .onTapGesture {
-                                withAnimation { path.append(.purple) }
+                                }
+                                .frame(width: 100, height: 100)
+                                .portalSource(id: "demo2")
+                                .onTapGesture {
+                                    withAnimation { path.append(.purple) }
+                                }
+                                .shadow(color: .black.opacity(0.1), radius: 5, x: 0, y: 2)
+                                
+                                Text("Purple Shape")
+                                    .font(.caption)
+                                    .fontWeight(.medium)
+                                    .foregroundColor(.secondary)
                             }
                         }
+                        .padding(.vertical, 16)
                         
-                        Toggle("Use matching colors", isOn: $useMatchingColors)
-                            .padding()
+                        VStack(alignment: .leading, spacing: 8) {
+                            Toggle("Use matching colors", isOn: $useMatchingColors)
+                                .toggleStyle(SwitchToggleStyle(tint: Color.blue))
+                            
+                            Text(useMatchingColors
+                                 ? "Colors match for smooth transitions"
+                                 : "Different colors show transition breaks")
+                                .font(.caption)
+                                .foregroundColor(.secondary)
+                        }
+                        .padding()
+                        .background(
+                            RoundedRectangle(cornerRadius: 12)
+                                .fill(Color(.secondarySystemBackground))
+                        )
+                        .padding(.horizontal)
                         
                         Spacer()
                     }
                     .frame(maxWidth: .infinity)
                 }
-                .navigationTitle("Portals + Nav")
+                .navigationTitle("Navigation Portals")
+                .background(Color(.systemGroupedBackground).ignoresSafeArea())
                 // MARK: – 5) set up destinations
                 .navigationDestination(for: DemoSelection.self) { sel in
                     switch sel {
@@ -178,7 +207,9 @@ fileprivate struct DetailView: View {
         ScrollView {
             VStack(spacing: 24) {
                 Text("\(id.capitalized) Expanded")
-                    .font(.title2).bold().padding(.top, 16)
+                    .font(.title2)
+                    .fontWeight(.bold)
+                    .padding(.top, 16)
                 
                 AnimatedLayer(id: id) {
                     RoundedRectangle(cornerRadius: 16)
@@ -195,12 +226,30 @@ fileprivate struct DetailView: View {
                 .onTapGesture {
                     withAnimation { dismiss() }
                 }
+                .shadow(color: .black.opacity(0.1), radius: 10, x: 0, y: 5)
                 
                 Text("Tap to go back")
-                    .font(.subheadline).foregroundColor(.secondary)
+                    .font(.subheadline)
+                    .foregroundColor(.secondary)
+                    .padding(.top, 8)
+                
+                Button(action: { withAnimation { dismiss() } }) {
+                    Text("Dismiss")
+                        .fontWeight(.semibold)
+                        .frame(width: 200)
+                        .padding()
+                        .background(
+                            RoundedRectangle(cornerRadius: 16)
+                                .fill(Color(.secondarySystemBackground))
+                        )
+                        .foregroundColor(.primary)
+                }
+                .padding(.top, 20)
             }
             .padding()
+            .frame(maxWidth: .infinity)
         }
+        .background(Color(.systemGroupedBackground).ignoresSafeArea())
     }
 }
 #endif
