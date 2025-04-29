@@ -3,12 +3,6 @@ import SwiftUI
 import UIKit
 #endif
 
-public enum PortalOverlayTrigger {
-    case onAppear
-    case onSceneActive
-    case both
-}
-
 /// A SwiftUI container that overlays a transparent window above your app's UI,
 /// optionally hiding the status bar in the overlay.
 ///
@@ -16,7 +10,6 @@ public enum PortalOverlayTrigger {
 /// The overlay is managed automatically as the app's scene becomes active/inactive.
 ///
 /// - Parameters:
-///   - overlayTrigger: Controls what triggers the overlay to load.
 ///   - hideStatusBar: Whether the overlay should hide the status bar. Default is `true`.
 ///   - content: The main content of your view hierarchy.
 /// - Example:
@@ -30,7 +23,6 @@ public struct PortalContainer<Content: View>: View {
     @Environment(\.scenePhase) private var scene
     @StateObject private var portalModel = CrossModel()
     private let hideStatusBar: Bool
-    private let overlayTrigger: PortalOverlayTrigger
     
     /// Creates a new PortalContainer.
     /// - Parameters:
@@ -38,11 +30,9 @@ public struct PortalContainer<Content: View>: View {
     ///   - content: The main content view.
     
     public init(
-        overlayTrigger: PortalOverlayTrigger = .onSceneActive,
         hideStatusBar: Bool = true,
         @ViewBuilder content: () -> Content
     ) {
-        self.overlayTrigger = overlayTrigger
         self.hideStatusBar = hideStatusBar
         self.content = content()
     }
