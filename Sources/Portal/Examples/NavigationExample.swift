@@ -155,7 +155,7 @@ public struct Portal_NavigationExample: View {
                                              id: "demo2")
                     }
                 }
-                // MARK: – 6) portal transitions remain exactly the same
+                // MARK: – 6) portal transitions
                 .portalTransition(
                     id: "demo1",
                     isActive: isShowingRed,

@@ -14,11 +14,9 @@ struct CardDetailView: View {
 
     var body: some View {
         VStack(spacing: 20) {
-            AnimatedGradient(item: Binding(get: {
-                card
-            }, set: { Value in
-                
-            })) {
+            // MARK: Destination View
+            
+            AnimatedGradient(item: card) {
                 RoundedRectangle(cornerRadius: 16)
                     .fill(
                         LinearGradient(
@@ -29,7 +27,6 @@ struct CardDetailView: View {
                     )
             }
                 .frame(width: 240, height: 240)
-                // Mark the destination with the matching ID
                 .portalDestination(item: card)
                 .padding(.top, 30)
 
@@ -123,7 +120,7 @@ public struct Portal_CardsExample: View {
     public init() {}
 
     public var body: some View {
-        // --- Step 1: Wrap in PortalContainer ---
+        // MARK: Wrap in Portal Container
         PortalContainer{
             ZStack {
                 Color(.systemGroupedBackground)
@@ -139,13 +136,8 @@ public struct Portal_CardsExample: View {
                         LazyVGrid(columns: columns, spacing: 20) {
                             ForEach(cardData) { card in
                                 VStack(spacing: 12) {
-                                    // --- Step 2: Mark the Source View ---
-                                    
-                                    AnimatedGradient(item: Binding(get: {
-                                        card
-                                    }, set: { Value in
-                                        selectedCard = Value
-                                    })) {
+                                    // MARK: Source View
+                                    AnimatedGradient(item: card) {
                                         RoundedRectangle(cornerRadius: 16)
                                             .fill(
                                                 LinearGradient(
@@ -156,9 +148,7 @@ public struct Portal_CardsExample: View {
                                             )
                                     }
                                         .frame(height: 120)
-                                        // Mark the source with the channel ID
                                         .portalSource(item: card)
-                                    // --- End Source View ---
 
                                     Text(card.title)
                                         .font(.headline)
@@ -194,11 +184,7 @@ public struct Portal_CardsExample: View {
                     animation: animationExample,
                     animationDuration: animationDuration
                 ) { card in
-                    AnimatedGradient(item: Binding(get: {
-                        card
-                    }, set: { Value in
-                        selectedCard = Value
-                    })) {
+                    AnimatedGradient(item: card) {
                         RoundedRectangle(cornerRadius: 16)
                             .fill(
                                 LinearGradient(
@@ -209,17 +195,16 @@ public struct Portal_CardsExample: View {
                             )
                     }
                 }
-                // --- End Portal Transition ---
+               
             }
             .navigationTitle("Gradient Cards")
-            // --- End PortalContainer ---
         }
     }
 }
 
 struct AnimatedGradient<Content: View>: View {
     @EnvironmentObject private var portalModel: CrossModel
-    @Binding public var item: CardInfo?
+    public var item: CardInfo?
     @ViewBuilder let content: () -> Content
     
     @State private var layerScale: CGFloat = 1
