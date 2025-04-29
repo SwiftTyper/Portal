@@ -182,7 +182,7 @@ public struct Portal_CardsExample: View {
                 .portalTransition(
                     item: $selectedCard, // Driven by the optional Identifiable item
                     animation: animationExample,
-                    animationDuration: animationDuration
+                    animationDuration: animationDuration + 0.12
                 ) { card in
                     AnimatedGradient(item: card) {
                         RoundedRectangle(cornerRadius: 16)

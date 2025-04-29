@@ -30,7 +30,7 @@ public struct PortalContainer<Content: View>: View {
     ///   - content: The main content view.
     
     public init(
-        hideStatusBar: Bool = true,
+        hideStatusBar: Bool = false,
         @ViewBuilder content: () -> Content
     ) {
         self.hideStatusBar = hideStatusBar
