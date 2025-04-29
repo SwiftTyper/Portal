@@ -50,44 +50,26 @@ public struct PortalContainer<Content: View>: View {
     public var body: some View {
         content
             .onAppear {
-    #if canImport(UIKit)
-                if overlayTrigger == .onAppear || overlayTrigger == .both {
-                    print("[PortalContainer] onAppear: Adding overlay window (trigger: \(overlayTrigger))")
-                    OverlayWindowManager.shared.addOverlayWindow(
-                        with: portalModel,
-                        hideStatusBar: hideStatusBar
-                    )
-                }
-    #endif
+                setupWindow(scene)
             }
-            .onDisappear {
-    #if canImport(UIKit)
-                if overlayTrigger == .onAppear || overlayTrigger == .both {
-                    print("[PortalContainer] onDisappear: Removing overlay window (trigger: \(overlayTrigger))")
-                    OverlayWindowManager.shared.removeOverlayWindow()
-                }
-    #endif
-            }
-            .onChange(of: scene) { newValue in
-    #if canImport(UIKit)
-                if (overlayTrigger == .onSceneActive || overlayTrigger == .both),
-                   newValue == .active {
-                    print("[PortalContainer] scene became active: Adding overlay window (trigger: \(overlayTrigger))")
-                    OverlayWindowManager.shared.addOverlayWindow(
-                        with: portalModel,
-                        hideStatusBar: hideStatusBar
-                    )
-                } else if (overlayTrigger == .onSceneActive || overlayTrigger == .both),
-                          newValue != .active {
-                    print("[PortalContainer] scene became inactive: Removing overlay window (trigger: \(overlayTrigger))")
-                    OverlayWindowManager.shared.removeOverlayWindow()
-                }
-    #endif
+            .onChangeCompat(of: scene) { newValue in
+                setupWindow(newValue)
             }
             .environmentObject(portalModel)
     }
-
     
+    private func setupWindow(_ scenePhase: ScenePhase) {
+#if canImport(UIKit)
+        if scenePhase == .active {
+            OverlayWindowManager.shared.addOverlayWindow(
+                with: portalModel,
+                hideStatusBar: hideStatusBar
+            )
+        } else {
+            OverlayWindowManager.shared.removeOverlayWindow()
+        }
+#endif
+    }
 }
 
 /// Adds a portal container overlay to the view, optionally hiding the status bar.
@@ -152,6 +134,7 @@ final class OverlayWindowManager {
                 root.view.frame = windowScene.screen.bounds
                 
                 window.rootViewController = root
+                guard self.overlayWindow == nil else { return }
                 self.overlayWindow = window
                 break
             }
