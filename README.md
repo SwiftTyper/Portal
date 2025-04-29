@@ -39,26 +39,32 @@
 
 - **DocC Documentation**
 
-- **`PortalContainer(hideStatusBar:) { ... }`**  
-  Manages overlay window logic for floating portal animations. The `hideStatusBar` parameter controls whether the status bar is hidden when the overlay is active.
+- **`PortalContainer { ... }`** \
+  Manages the overlay window logic required for floating portal animations across hierarchies.
 
-- **`.portalContainer(hideStatusBar:)`**  
-  View extension for easily wrapping any view in a portal container, with optional status bar hiding.
+- **`.portalContainer()`** \
+  View extension for easily wrapping any view hierarchy in a `PortalContainer`.
 
-- **`.portalSource(id:)`**  
-  Marks a view as the source anchor for portal transitions.
+- **`.portalSource(id:)`** \
+  Marks a view as the source anchor for a portal transition using a static string identifier.
 
-- **`.portalDestination(id:)`**  
-  Marks a view as the destination anchor for portal transitions.
+- **`.portalSource(item:)`** \
+  Marks a view as the source anchor for a portal transition, keyed by an `Identifiable` item's ID.
 
-- **`.portalTransition(id: isActive: animation: animationDuration: delay: layer: completion:)`**  
-  Drives the floating overlay animation, with options for animation type, duration, delay, layering, and completion handling.
+- **`.portalDestination(id:)`** \
+  Marks a view as the destination anchor for a portal transition using a static string identifier.
 
-- **`.portalTransition(id: item: animation: animationDuration: delay: layer: layerView: completion:)`** 
-  Drives the floating overlay animation, triggered by the presence of an optional `Identifiable` item. Requires a matching `id` with `.portalSource` and `.portalDestination`. Provides options for animation type, duration, delay, the view to animate (`layerView`), layering, and completion handling.
+- **`.portalDestination(item:)`** \
+  Marks a view as the destination anchor for a portal transition, keyed by an `Identifiable` item's ID.
 
-- **No custom presentation modifiers required**  
-  Works directly with standard SwiftUI views.
+- **`.portalTransition(id: isActive: ...)`** \
+  Drives the floating overlay animation based on a `Binding<Bool>` (`isActive`) and a static string `id` matching the source/destination.
+
+- **`.portalTransition(item: ...)`** \
+  Drives the floating overlay animation based on a `Binding<Optional<Item>>` (`item`), where `Item` is `Identifiable`. Automatically keys the transition to the item's ID
+
+- **No custom presentation modifiers required** \
+  Works directly with standard SwiftUI presentation methods (`.sheet`, `.navigationDestination`, etc.).
 
 - **iOS 15+ support**
 
