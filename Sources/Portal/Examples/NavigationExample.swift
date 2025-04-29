@@ -13,14 +13,13 @@ private enum DemoSelection: Hashable {
     case red, purple
 }
 
-
 @available(iOS 16.0, *)
 public struct Portal_NavigationExample: View {
-    // MARK: – 1) Use an array for the stack
+    // MARK: Array for the stack
     @State private var path: [DemoSelection] = []
     @State private var useMatchingColors = true
     
-    // MARK: – 2) Drive portal animations from `path`
+    // MARK: Drive portal animations from `path`
     private var isShowingRed: Binding<Bool> {
         Binding(
             get: { path.contains(.red) },
@@ -38,7 +37,7 @@ public struct Portal_NavigationExample: View {
         )
     }
     
-    // MARK: – 3) Gradients
+    // MARK: Gradients
     private let redGradient = [
         Color(red: 0.98, green: 0.36, blue: 0.35),
         Color(red: 0.92, green: 0.25, blue: 0.48),
@@ -69,7 +68,7 @@ public struct Portal_NavigationExample: View {
                             .padding(.top, 16)
                         
                         HStack(spacing: 30) {
-                            // RED source
+                            // MARK: RED source
                             VStack(spacing: 12) {
                                 AnimatedLayer(id: "demo1") {
                                     RoundedRectangle(cornerRadius: 16)
@@ -95,7 +94,7 @@ public struct Portal_NavigationExample: View {
                                     .foregroundColor(.secondary)
                             }
                             
-                            // PURPLE source
+                            // MARK: PURPLE source
                             VStack(spacing: 12) {
                                 AnimatedLayer(id: "demo2") {
                                     RoundedRectangle(cornerRadius: 16)
@@ -146,7 +145,7 @@ public struct Portal_NavigationExample: View {
                 }
                 .navigationTitle("Navigation Portals")
                 .background(Color(.systemGroupedBackground).ignoresSafeArea())
-                // MARK: – 5) set up destinations
+                // MARK: Set up destinations
                 .navigationDestination(for: DemoSelection.self) { sel in
                     switch sel {
                     case .red: DetailView(colorSet: useMatchingColors ? redGradient : alt1,
@@ -155,7 +154,7 @@ public struct Portal_NavigationExample: View {
                                              id: "demo2")
                     }
                 }
-                // MARK: – 6) portal transitions
+                // MARK: Portal transitions
                 .portalTransition(
                     id: "demo1",
                     isActive: isShowingRed,
@@ -174,7 +173,7 @@ public struct Portal_NavigationExample: View {
                             )
                     }
                 }
-            } // NavigationStack
+            }
             
             .portalTransition(
                 id: "demo2",
@@ -194,7 +193,7 @@ public struct Portal_NavigationExample: View {
                         )
                 }
             }
-        } // PortalContainer
+        }
     }
 }
 

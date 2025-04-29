@@ -32,6 +32,7 @@ public struct Portal_SheetExample: View {
     public init() {}
     
     public var body: some View {
+        // MARK: Wrap in PortalContainer
         PortalContainer{
             NavigationView {
                 ZStack {
@@ -54,7 +55,8 @@ public struct Portal_SheetExample: View {
                             // Two squares side by side
                             HStack(spacing: 30) {
                                 VStack(spacing: 12) {
-                                    AnimatedLayer(id: "demo1") {
+                                    // MARK: Red Rectangle Source
+                                    AnimatedLayer(id: "redRect") {
                                         RoundedRectangle(cornerRadius: 16)
                                             .fill(
                                                 LinearGradient(
@@ -65,7 +67,7 @@ public struct Portal_SheetExample: View {
                                             )
                                     }
                                     .frame(width: 100, height: 100)
-                                    .portalSource(id: "demo1")
+                                    .portalSource(id: "redRect")
                                     .onTapGesture { withAnimation { showDetailRed.toggle() } }
                                     .shadow(color: .black.opacity(0.1), radius: 5, x: 0, y: 2)
                                     
@@ -76,7 +78,8 @@ public struct Portal_SheetExample: View {
                                 }
                                 
                                 VStack(spacing: 12) {
-                                    AnimatedLayer(id: "demo2") {
+                                    // MARK: Purple Rectangle Source
+                                    AnimatedLayer(id: "purpleRect") {
                                         RoundedRectangle(cornerRadius: 16)
                                             .fill(
                                                 LinearGradient(
@@ -87,7 +90,7 @@ public struct Portal_SheetExample: View {
                                             )
                                     }
                                     .frame(width: 100, height: 100)
-                                    .portalSource(id: "demo2")
+                                    .portalSource(id: "purpleRect")
                                     .onTapGesture { withAnimation { showDetailPurple.toggle() } }
                                     .shadow(color: .black.opacity(0.1), radius: 5, x: 0, y: 2)
                                     
@@ -131,7 +134,7 @@ public struct Portal_SheetExample: View {
                         }
                     })
                     
-                    // First sheet (red square)
+                    // MARK: Red Rectangle Sheet
                     .sheet(isPresented: $showDetailRed) {
                         ScrollView {
                             VStack(spacing: 24) {
@@ -142,7 +145,8 @@ public struct Portal_SheetExample: View {
                                 
                                 Spacer().frame(height: 30)
                                 
-                                AnimatedLayer(id: "demo1") {
+                                // MARK: Red Rectangle Destination
+                                AnimatedLayer(id: "redRect") {
                                     RoundedRectangle(cornerRadius: 16)
                                         .fill(
                                             LinearGradient(
@@ -153,7 +157,7 @@ public struct Portal_SheetExample: View {
                                         )
                                 }
                                 .frame(width: 220, height: 220)
-                                .portalDestination(id: "demo1")
+                                .portalDestination(id: "redRect")
                                 .onTapGesture { withAnimation { showDetailRed.toggle() } }
                                 .shadow(color: .black.opacity(0.1), radius: 10, x: 0, y: 5)
                                 
@@ -170,7 +174,7 @@ public struct Portal_SheetExample: View {
                         .background(Color(UIColor.systemGroupedBackground))
                     }
                     
-                    // Second sheet (purple square)
+                    // MARK: Purple Rectangle Sheet
                     .sheet(isPresented: $showDetailPurple) {
                         ScrollView {
                             VStack(spacing: 24) {
@@ -181,7 +185,8 @@ public struct Portal_SheetExample: View {
                                 
                                 Spacer().frame(height: 30)
                                 
-                                AnimatedLayer(id: "demo2") {
+                                // MARK: Purple Rectangle Destination
+                                AnimatedLayer(id: "purpleRect") {
                                     RoundedRectangle(cornerRadius: 16)
                                         .fill(
                                             LinearGradient(
@@ -192,7 +197,7 @@ public struct Portal_SheetExample: View {
                                         )
                                 }
                                 .frame(width: 220, height: 220)
-                                .portalDestination(id: "demo2")
+                                .portalDestination(id: "purpleRect")
                                 .onTapGesture { withAnimation { showDetailPurple.toggle() } }
                                 .shadow(color: .black.opacity(0.1), radius: 10, x: 0, y: 5)
                                 
@@ -211,12 +216,12 @@ public struct Portal_SheetExample: View {
                     
                     // Transition for first square (red)
                     .portalTransition(
-                        id: "demo1",
+                        id: "redRect",
                         isActive: $showDetailRed,
                         animation: animationExample,
                         animationDuration: animationDuration
                     ) {
-                        AnimatedLayer(id: "demo1") {
+                        AnimatedLayer(id: "redRect") {
                             RoundedRectangle(cornerRadius: 16)
                                 .fill(
                                     LinearGradient(
@@ -230,12 +235,12 @@ public struct Portal_SheetExample: View {
                     
                     // Transition for second square (purple)
                     .portalTransition(
-                        id: "demo2",
+                        id: "purpleRect",
                         isActive: $showDetailPurple,
                         animation: animationExample,
                         animationDuration: animationDuration
                     ) {
-                        AnimatedLayer(id: "demo2") {
+                        AnimatedLayer(id: "purpleRect") {
                             RoundedRectangle(cornerRadius: 16)
                                 .fill(
                                     LinearGradient(
