@@ -23,11 +23,12 @@ public struct PortalContainer<Content: View>: View {
     @Environment(\.scenePhase) private var scene
     @StateObject private var portalModel = CrossModel()
     private let hideStatusBar: Bool
-
+    
     /// Creates a new PortalContainer.
     /// - Parameters:
     ///   - hideStatusBar: Whether the overlay should hide the status bar.
     ///   - content: The main content view.
+    
     public init(
         hideStatusBar: Bool = false,
         @ViewBuilder content: () -> Content
@@ -35,22 +36,34 @@ public struct PortalContainer<Content: View>: View {
         self.hideStatusBar = hideStatusBar
         self.content = content()
     }
-
+    
     public var body: some View {
         content
-            .onChange(of: scene) { newValue in
-                #if canImport(UIKit)
-                if newValue == .active {
-                    OverlayWindowManager.shared.addOverlayWindow(
-                        with: portalModel,
-                        hideStatusBar: hideStatusBar
-                    )
-                } else {
-                    OverlayWindowManager.shared.removeOverlayWindow()
-                }
-                #endif
+            .onAppear {
+                setupWindow(scene)
+            }
+            .onDisappear() {
+                OverlayWindowManager.shared.removeOverlayWindow()
+            }
+            .onChangeCompat(of: scene) { newValue in
+                setupWindow(newValue)
             }
             .environmentObject(portalModel)
+    }
+    
+    private func setupWindow(_ scenePhase: ScenePhase) {
+#if canImport(UIKit)
+        if scenePhase == .active {
+            print("add overlay")
+            OverlayWindowManager.shared.addOverlayWindow(
+                with: portalModel,
+                hideStatusBar: hideStatusBar
+            )
+        } else {
+            print("remove overlay")
+            OverlayWindowManager.shared.removeOverlayWindow()
+        }
+#endif
     }
 }
 
@@ -64,6 +77,7 @@ public struct PortalContainer<Content: View>: View {
 ///     .portalContainer(hideStatusBar: false)
 /// ```
 extension View {
+    
     @ViewBuilder
     public func portalContainer(hideStatusBar: Bool = true) -> some View {
         PortalContainer(hideStatusBar: hideStatusBar) {
@@ -79,7 +93,7 @@ import UIKit
 final class OverlayWindowManager {
     static let shared = OverlayWindowManager()
     private var overlayWindow: PassThroughWindow?
-
+    
     /// Adds the overlay window to the active scene.
     /// - Parameters:
     ///   - portalModel: The shared portal model.
@@ -93,12 +107,12 @@ final class OverlayWindowManager {
             for scene in UIApplication.shared.connectedScenes {
                 guard let windowScene = scene as? UIWindowScene,
                       scene.activationState == .foregroundActive else { continue }
-
+                
                 let window = PassThroughWindow(windowScene: windowScene)
                 window.backgroundColor = .clear
                 window.isUserInteractionEnabled = false
                 window.isHidden = false
-
+                
                 let root: UIViewController
                 if hideStatusBar {
                     root = HiddenStatusHostingController(
@@ -113,14 +127,18 @@ final class OverlayWindowManager {
                 }
                 root.view.backgroundColor = .clear
                 root.view.frame = windowScene.screen.bounds
-
+                
                 window.rootViewController = root
+                guard self.overlayWindow == nil else {
+                    
+                        print("overlayWindow populated, return")
+                    return }
                 self.overlayWindow = window
                 break
             }
         }
     }
-
+    
     /// Removes the overlay window from the scene.
     func removeOverlayWindow() {
         DispatchQueue.main.async {

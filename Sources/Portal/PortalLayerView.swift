@@ -30,7 +30,7 @@ internal struct PortalLayerView: View {
                     // Delay to allow animation to finish
                     DispatchQueue.main.asyncAfter(deadline: .now() + info.animationDuration + 0.2) {
                         if !newValue {
-                            info.isActive = false
+                            info.initalized = false
                             info.layerView = nil
                             info.sourceAnchor = nil
                             info.destinationAnchor = nil

@@ -23,13 +23,13 @@ public struct PortalDestination<Content: View>: View {
         content
             .opacity(opacity)
             .anchorPreference(key: AnchorKey.self, value: .bounds) { anchor in
-                if let idx = index, portalModel.info[idx].isActive {
+                if let idx = index, portalModel.info[idx].initalized {
                     return [destKey: anchor]
                 }
                 return [:]
             }
             .onPreferenceChange(AnchorKey.self) { prefs in
-                if let idx = index, portalModel.info[idx].isActive {
+                if let idx = index, portalModel.info[idx].initalized {
                     portalModel.info[idx].destinationAnchor = prefs[destKey]
                 }
             }
@@ -43,7 +43,7 @@ public struct PortalDestination<Content: View>: View {
     
     private var opacity: CGFloat {
         guard let idx = index else { return 1 }
-        return portalModel.info[idx].isActive ? (portalModel.info[idx].hideView ? 1 : 0) : 1
+        return portalModel.info[idx].initalized ? (portalModel.info[idx].hideView ? 1 : 0) : 1
     }
 }
 

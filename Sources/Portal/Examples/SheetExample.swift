@@ -5,7 +5,7 @@ let animationDuration: TimeInterval = 0.4
 let animationExample: Animation = Animation.smooth(duration: animationDuration, extraBounce: 0.25)
 let animationExampleExtraBounce: Animation = Animation.smooth(duration: animationDuration + 0.12, extraBounce: 0.55)
 
-/// A demo view to showcase SheetShow Portal transitions
+/// A demo view to showcase Sheet Portal transitions
 public struct Portal_SheetExample: View {
     @State private var showDetailRed = false
     @State private var showDetailPurple = false
@@ -32,25 +32,121 @@ public struct Portal_SheetExample: View {
     public init() {}
     
     public var body: some View {
-        NavigationView{
-            PortalContainer {
-                ScrollView {
-                    VStack(spacing: 24) {
-                        
-                        Text("This demo shows how multiple portal transitions can work simultaneously.")
-                            .font(.subheadline)
-                            .foregroundColor(.secondary)
-                            .padding(.horizontal)
-                            .multilineTextAlignment(.center)
-                        
-                        Text("Tap either shape to expand it")
-                            .font(.subheadline)
-                            .foregroundColor(.secondary)
-                        
-                        // Two squares side by side
-                        HStack(spacing: 30) {
-                            VStack {
-                                AnimatedLayer(id: "demo1") {
+        // MARK: Wrap in PortalContainer
+        PortalContainer{
+            NavigationView {
+                ZStack {
+                    Color(.systemGroupedBackground)
+                        .ignoresSafeArea()
+                    
+                    ScrollView {
+                        VStack(spacing: 24) {
+                            Text("This demo shows how multiple portal transitions can work simultaneously.")
+                                .font(.subheadline)
+                                .foregroundColor(.secondary)
+                                .padding(.horizontal)
+                                .multilineTextAlignment(.center)
+                                .padding(.top, 8)
+                            
+                            Text("Tap either shape to expand it")
+                                .font(.callout)
+                                .foregroundColor(.secondary)
+                            
+                            // Two squares side by side
+                            HStack(spacing: 30) {
+                                VStack(spacing: 12) {
+                                    // MARK: Red Rectangle Source
+                                    AnimatedLayer(id: "redRect") {
+                                        RoundedRectangle(cornerRadius: 16)
+                                            .fill(
+                                                LinearGradient(
+                                                    gradient: Gradient(colors: redGradient),
+                                                    startPoint: .topLeading,
+                                                    endPoint: .bottomTrailing
+                                                )
+                                            )
+                                    }
+                                    .frame(width: 100, height: 100)
+                                    .portalSource(id: "redRect")
+                                    .onTapGesture { withAnimation { showDetailRed.toggle() } }
+                                    .shadow(color: .black.opacity(0.1), radius: 5, x: 0, y: 2)
+                                    
+                                    Text("Portal 1")
+                                        .font(.caption)
+                                        .fontWeight(.medium)
+                                        .foregroundColor(.secondary)
+                                }
+                                
+                                VStack(spacing: 12) {
+                                    // MARK: Purple Rectangle Source
+                                    AnimatedLayer(id: "purpleRect") {
+                                        RoundedRectangle(cornerRadius: 16)
+                                            .fill(
+                                                LinearGradient(
+                                                    gradient: Gradient(colors: purpleGradient),
+                                                    startPoint: .topLeading,
+                                                    endPoint: .bottomTrailing
+                                                )
+                                            )
+                                    }
+                                    .frame(width: 100, height: 100)
+                                    .portalSource(id: "purpleRect")
+                                    .onTapGesture { withAnimation { showDetailPurple.toggle() } }
+                                    .shadow(color: .black.opacity(0.1), radius: 5, x: 0, y: 2)
+                                    
+                                    Text("Portal 2")
+                                        .font(.caption)
+                                        .fontWeight(.medium)
+                                        .foregroundColor(.secondary)
+                                }
+                            }
+                            .padding(.vertical, 16)
+                        }
+                        .frame(maxWidth: .infinity)
+                        .padding(.bottom, 100) // Space for the toggle control
+                    }
+                    .safeAreaInset(edge: .bottom, content: {
+                        // Toggle for matching/different colors
+                        VStack(alignment: .leading, spacing: 12) {
+                            Toggle(isOn: $useMatchingColors) {
+                                VStack(alignment: .leading, spacing: 4) {
+                                    Text("Use matching colors for all elements")
+                                        .fontWeight(.medium)
+                                    Text(
+                                        useMatchingColors
+                                        ? "All elements have the same appearance for smooth transitions"
+                                        : "Elements have different colors to show how transitions can break"
+                                    )
+                                    .font(.caption)
+                                    .foregroundColor(.secondary)
+                                }
+                            }
+                            .toggleStyle(SwitchToggleStyle(tint: Color.blue))
+                        }
+                        .padding(.vertical, 18)
+                        .padding(.horizontal, 20)
+                        .padding(.bottom, 12)
+                        .background {
+                            RoundedRectangle(cornerRadius: 20)
+                                .fill(Color(.systemBackground))
+                                .shadow(color: .black.opacity(0.05), radius: 10, x: 0, y: -5)
+                                .ignoresSafeArea()
+                        }
+                    })
+                    
+                    // MARK: Red Rectangle Sheet
+                    .sheet(isPresented: $showDetailRed) {
+                        ScrollView {
+                            VStack(spacing: 24) {
+                                Text("Red Square Expanded")
+                                    .font(.title2)
+                                    .fontWeight(.bold)
+                                    .padding(.top, 16)
+                                
+                                Spacer().frame(height: 30)
+                                
+                                // MARK: Red Rectangle Destination
+                                AnimatedLayer(id: "redRect") {
                                     RoundedRectangle(cornerRadius: 16)
                                         .fill(
                                             LinearGradient(
@@ -60,17 +156,37 @@ public struct Portal_SheetExample: View {
                                             )
                                         )
                                 }
-                                .frame(width: 100, height: 100)
-                                .portalSource(id: "demo1")
+                                .frame(width: 220, height: 220)
+                                .portalDestination(id: "redRect")
                                 .onTapGesture { withAnimation { showDetailRed.toggle() } }
+                                .shadow(color: .black.opacity(0.1), radius: 10, x: 0, y: 5)
                                 
-                                Text("Portal 1")
-                                    .font(.caption)
+                                Spacer().frame(height: 30)
+                                
+                                Text("Tap to collapse")
+                                    .font(.subheadline)
                                     .foregroundColor(.secondary)
+                                    .padding(.bottom, 40)
                             }
-                            
-                            VStack {
-                                AnimatedLayer(id: "demo2") {
+                            .padding()
+                            .frame(maxWidth: .infinity)
+                        }
+                        .background(Color(UIColor.systemGroupedBackground))
+                    }
+                    
+                    // MARK: Purple Rectangle Sheet
+                    .sheet(isPresented: $showDetailPurple) {
+                        ScrollView {
+                            VStack(spacing: 24) {
+                                Text("Purple Square Expanded")
+                                    .font(.title2)
+                                    .fontWeight(.bold)
+                                    .padding(.top, 16)
+                                
+                                Spacer().frame(height: 30)
+                                
+                                // MARK: Purple Rectangle Destination
+                                AnimatedLayer(id: "purpleRect") {
                                     RoundedRectangle(cornerRadius: 16)
                                         .fill(
                                             LinearGradient(
@@ -80,166 +196,67 @@ public struct Portal_SheetExample: View {
                                             )
                                         )
                                 }
-                                .frame(width: 100, height: 100)
-                                .portalSource(id: "demo2")
+                                .frame(width: 220, height: 220)
+                                .portalDestination(id: "purpleRect")
                                 .onTapGesture { withAnimation { showDetailPurple.toggle() } }
+                                .shadow(color: .black.opacity(0.1), radius: 10, x: 0, y: 5)
                                 
-                                Text("Portal 2")
-                                    .font(.caption)
+                                Spacer().frame(height: 30)
+                                
+                                Text("Tap to collapse")
+                                    .font(.subheadline)
                                     .foregroundColor(.secondary)
+                                    .padding(.bottom, 40)
                             }
+                            .padding()
+                            .frame(maxWidth: .infinity)
                         }
-                        
-                    }
-                    .frame(maxWidth: .infinity)
-                }
-                .safeAreaInset(edge: .bottom, content: {
-                    
-                    // Toggle for matching/different colors
-                    VStack(alignment: .leading, spacing: 12) {
-                        Toggle(isOn: $useMatchingColors) {
-                            VStack(alignment: .leading){
-                                Text("Use matching colors for all elements")
-                                Text(
-                                    useMatchingColors
-                                    ? "All elements have the same appearance for smooth transitions"
-                                    : "Elements have different colors to show how transitions can break"
-                                )
-                                .font(.caption)
-                                .foregroundColor(.secondary)
-                            }
-                        }
-                    }
-                    .padding(.vertical, 18)
-                    .padding(.horizontal, 20)
-                    .padding(.bottom, 12)
-                    .background{
-                        Color(.systemGray6)
-                            .clipShape(.rect(cornerRadius: 20))
-                            .ignoresSafeArea()
+                        .background(Color(UIColor.systemGroupedBackground))
                     }
                     
-                })
-                
-                // First sheet (red square)
-                .sheet(isPresented: $showDetailRed) {
-                    ScrollView {
-                        VStack(spacing: 24) {
-                            Text("Red Square Expanded")
-                                .font(.title2)
-                                .fontWeight(.bold)
-                                .padding(.top, 16)
-                            
-                            Spacer().frame(height: 30)
-                            
-                            AnimatedLayer(id: "demo1") {
-                                RoundedRectangle(cornerRadius: 16)
-                                    .fill(
-                                        LinearGradient(
-                                            gradient: Gradient(colors: redGradient),
-                                            startPoint: .topLeading,
-                                            endPoint: .bottomTrailing
-                                        )
+                    // Transition for first square (red)
+                    .portalTransition(
+                        id: "redRect",
+                        isActive: $showDetailRed,
+                        animation: animationExample,
+                        animationDuration: animationDuration
+                    ) {
+                        AnimatedLayer(id: "redRect") {
+                            RoundedRectangle(cornerRadius: 16)
+                                .fill(
+                                    LinearGradient(
+                                        gradient: Gradient(colors: useMatchingColors ? redGradient : alternateGradient1),
+                                        startPoint: .topLeading,
+                                        endPoint: .bottomTrailing
                                     )
-                            }
-                            .frame(width: 220, height: 220)
-                            .portalDestination(id: "demo1")
-                            .onTapGesture { withAnimation { showDetailRed.toggle() } }
-                            
-                            Spacer().frame(height: 30)
-                            
-                            Text("Tap to collapse")
-                                .font(.subheadline)
-                                .foregroundColor(.secondary)
-                                .padding(.bottom, 40)
+                                )
                         }
-                        .padding()
-                        .frame(maxWidth: .infinity)
                     }
-                    .background(Color(UIColor.systemGroupedBackground))
-                }
-                
-                // Second sheet (purple square)
-                .sheet(isPresented: $showDetailPurple) {
-                    ScrollView {
-                        VStack(spacing: 24) {
-                            Text("Purple Square Expanded")
-                                .font(.title2)
-                                .fontWeight(.bold)
-                                .padding(.top, 16)
-                            
-                            Spacer().frame(height: 30)
-                            
-                            AnimatedLayer(id: "demo2") {
-                                RoundedRectangle(cornerRadius: 16)
-                                    .fill(
-                                        LinearGradient(
-                                            gradient: Gradient(colors: purpleGradient),
-                                            startPoint: .topLeading,
-                                            endPoint: .bottomTrailing
-                                        )
+                    
+                    // Transition for second square (purple)
+                    .portalTransition(
+                        id: "purpleRect",
+                        isActive: $showDetailPurple,
+                        animation: animationExample,
+                        animationDuration: animationDuration
+                    ) {
+                        AnimatedLayer(id: "purpleRect") {
+                            RoundedRectangle(cornerRadius: 16)
+                                .fill(
+                                    LinearGradient(
+                                        gradient: Gradient(colors: useMatchingColors ? purpleGradient : alternateGradient2),
+                                        startPoint: .topLeading,
+                                        endPoint: .bottomTrailing
                                     )
-                            }
-                            .frame(width: 220, height: 220)
-                            .portalDestination(id: "demo2")
-                            .onTapGesture { withAnimation { showDetailPurple.toggle() } }
-                            
-                            Spacer().frame(height: 30)
-                            
-                            Text("Tap to collapse")
-                                .font(.subheadline)
-                                .foregroundColor(.secondary)
-                                .padding(.bottom, 40)
+                                )
                         }
-                        .padding()
-                        .frame(maxWidth: .infinity)
-                    }
-                    .background(Color(UIColor.systemGroupedBackground))
-                }
-                
-                // Transition for first square (red)
-                .portalTransition(
-                    id: "demo1",
-                    animate: $showDetailRed,
-                    animation: animationExample,
-                    animationDuration: animationDuration
-                ) {
-                    AnimatedLayer(id: "demo1") {
-                        RoundedRectangle(cornerRadius: 16)
-                            .fill(
-                                LinearGradient(
-                                    gradient: Gradient(colors: useMatchingColors ? redGradient : alternateGradient1),
-                                    startPoint: .topLeading,
-                                    endPoint: .bottomTrailing
-                                )
-                            )
                     }
                 }
-                
-                // Transition for second square (purple)
-                .portalTransition(
-                    id: "demo2",
-                    animate: $showDetailPurple,
-                    animation: animationExample,
-                    animationDuration: animationDuration
-                ) {
-                    AnimatedLayer(id: "demo2") {
-                        RoundedRectangle(cornerRadius: 16)
-                            .fill(
-                                LinearGradient(
-                                    gradient: Gradient(colors: useMatchingColors ? purpleGradient : alternateGradient2),
-                                    startPoint: .topLeading,
-                                    endPoint: .bottomTrailing
-                                )
-                            )
-                    }
-                }
+                .navigationTitle("Portal Transition Demo")
             }
-            .navigationTitle("Portal Transition Demo")
         }
     }
 }
-#endif
 
 struct AnimatedLayer<Content: View>: View {
     @EnvironmentObject private var portalModel: CrossModel
@@ -287,3 +304,5 @@ struct AnimatedLayer<Content: View>: View {
             )
     }
 }
+
+#endif
