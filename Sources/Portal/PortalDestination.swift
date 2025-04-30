@@ -23,14 +23,19 @@ public struct PortalDestination<Content: View>: View {
         content
             .opacity(opacity)
             .anchorPreference(key: AnchorKey.self, value: .bounds) { anchor in
-                if let idx = index, portalModel.info[idx].initalized {
-                    return [destKey: anchor]
+                var result: [String: Anchor<CGRect>] = [:]
+                MainActor.assumeIsolated {
+                    if let idx = index, portalModel.info[idx].initalized {
+                        result = [destKey: anchor]
+                    }
                 }
-                return [:]
+                return result
             }
             .onPreferenceChange(AnchorKey.self) { prefs in
-                if let idx = index, portalModel.info[idx].initalized {
-                    portalModel.info[idx].destinationAnchor = prefs[destKey]
+                MainActor.assumeIsolated {
+                    if let idx = index, portalModel.info[idx].initalized {
+                        portalModel.info[idx].destinationAnchor = prefs[destKey]
+                    }
                 }
             }
     }
