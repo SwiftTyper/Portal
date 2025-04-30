@@ -1,0 +1,35 @@
+name: Swift Package CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+jobs:
+  build-and-test:
+    runs-on: macos-latest
+    strategy:
+      matrix:
+        swift: [5.8, 5.9, 6.0]
+
+    name: Swift ${{ matrix.swift }}
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Swift ${{ matrix.swift }}
+        uses: swift-actions/setup-swift@v1
+        with:
+          swift-version: ${{ matrix.swift }}
+
+      - name: Build (Debug)
+        run: swift build -c debug
+
+      - name: Test (Debug)
+        run: swift test -c debug
+
+      - name: Build (Release)
+        run: swift build -c release
+
+      - name: Test (Release)
+        run: swift test -c release
