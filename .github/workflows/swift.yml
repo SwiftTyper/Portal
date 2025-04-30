@@ -26,6 +26,26 @@ jobs:
       - name: Build (iOS Debug)
         run: |
           xcodebuild -toolchain swift -scheme Portal -destination 'platform=iOS Simulator,name=iPhone 15,OS=latest' build
+        env:
+          SWIFT_VERSION: ${{ matrix.swift-version }}
+
+      - name: Test (iOS Debug)
+        run: |
+          xcodebuild -toolchain swift -scheme Portal -destination 'platform=iOS Simulator,name=iPhone 15,OS=latest' test
+        env:
+          SWIFT_VERSION: ${{ matrix.swift-version }}
+
+      - name: Build (iOS Release)
+        run: |
+          xcodebuild -toolchain swift -scheme Portal -configuration Release -destination 'platform=iOS Simulator,name=iPhone 15,OS=latest' build
+        env:
+          SWIFT_VERSION: ${{ matrix.swift-version }}
+
+      - name: Test (iOS Release)
+        run: |
+          xcodebuild -toolchain swift -scheme Portal -configuration Release -destination 'platform=iOS Simulator,name=iPhone 15,OS=latest' test
+        env:
+          SWIFT_VERSION: ${{ matrix.swift-version }}
 
       - name: Test (iOS Debug)
         run: |
