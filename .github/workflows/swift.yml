@@ -25,16 +25,16 @@ jobs:
 
       - name: Build (iOS Debug)
         run: |
-          xcodebuild -toolchain swift -scheme Portal -destination 'platform=iOS Simulator,name=iPhone 15,OS=latest' build
+          xcodebuild -toolchain swift -scheme Portal -destination 'platform=iOS Simulator,name=iPhone 15,OS=18.2' build
 
       - name: Test (iOS Debug)
         run: |
-          xcodebuild -toolchain swift -scheme Portal -destination 'platform=iOS Simulator,name=iPhone 15,OS=latest' test
+          xcodebuild -toolchain swift -scheme Portal -destination 'platform=iOS Simulator,name=iPhone 15,OS=18.2' test
 
       - name: Build (iOS Release)
         run: |
-          xcodebuild -toolchain swift -scheme Portal -configuration Release -destination 'platform=iOS Simulator,name=iPhone 15,OS=latest' build
+          xcodebuild -toolchain swift -scheme Portal -configuration Release -destination 'platform=iOS Simulator,name=iPhone 15,OS=18.2' build
 
       - name: Test (iOS Release)
         run: |
-          xcodebuild -toolchain swift -scheme Portal -configuration Release -destination 'platform=iOS Simulator,name=iPhone 15,OS=latest' test
+          xcodebuild -toolchain swift -scheme Portal -configuration Release -destination 'platform=iOS Simulator,name=iPhone 15,OS=18.2' test
