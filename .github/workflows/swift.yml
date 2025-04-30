@@ -19,33 +19,13 @@ jobs:
         uses: actions/checkout@v4
 
       - name: Setup Swift ${{ matrix.swift-version }}
-        uses: swift-actions/setup-swift@v2
+        uses: SwiftyLab/setup-swift@latest
         with:
-          swift-version: '${{ matrix.swift-version }}'
+          version: '${{ matrix.swift-version }}'
 
       - name: Build (iOS Debug)
         run: |
           xcodebuild -toolchain swift -scheme Portal -destination 'platform=iOS Simulator,name=iPhone 15,OS=latest' build
-        env:
-          SWIFT_VERSION: ${{ matrix.swift-version }}
-
-      - name: Test (iOS Debug)
-        run: |
-          xcodebuild -toolchain swift -scheme Portal -destination 'platform=iOS Simulator,name=iPhone 15,OS=latest' test
-        env:
-          SWIFT_VERSION: ${{ matrix.swift-version }}
-
-      - name: Build (iOS Release)
-        run: |
-          xcodebuild -toolchain swift -scheme Portal -configuration Release -destination 'platform=iOS Simulator,name=iPhone 15,OS=latest' build
-        env:
-          SWIFT_VERSION: ${{ matrix.swift-version }}
-
-      - name: Test (iOS Release)
-        run: |
-          xcodebuild -toolchain swift -scheme Portal -configuration Release -destination 'platform=iOS Simulator,name=iPhone 15,OS=latest' test
-        env:
-          SWIFT_VERSION: ${{ matrix.swift-version }}
 
       - name: Test (iOS Debug)
         run: |
