@@ -28,7 +28,7 @@ internal struct PortalLayerView: View {
                 }
                 .onChangeCompat(of: info.animateView) { newValue in
                     // Delay to allow animation to finish
-                    DispatchQueue.main.asyncAfter(deadline: .now() + info.animationDuration + 0.2) {
+                    DispatchQueue.main.asyncAfter(deadline: .now() + info.animationDuration + 0.25) {
                         if !newValue {
                             info.initalized = false
                             info.layerView = nil
