@@ -13,7 +13,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        swift-version: ['5.9', '6.0'] 
+        swift-version: ['6.0'] 
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
@@ -23,10 +23,18 @@ jobs:
         with:
           swift-version: ${{ matrix.swift-version }}
 
-      - name: Build (iOS)
+      - name: Build (iOS Debug)
         run: |
           xcodebuild -scheme Portal -destination 'platform=iOS Simulator,name=iPhone 15,OS=latest' build
 
-      - name: Test (iOS)
+      - name: Test (iOS Debug)
         run: |
           xcodebuild -scheme Portal -destination 'platform=iOS Simulator,name=iPhone 15,OS=latest' test
+
+      - name: Build (iOS Release)
+        run: |
+          xcodebuild -scheme Portal -configuration Release -destination 'platform=iOS Simulator,name=iPhone 15,OS=latest' build
+
+      - name: Test (iOS Release)
+        run: |
+          xcodebuild -scheme Portal -configuration Release -destination 'platform=iOS Simulator,name=iPhone 15,OS=latest' test
