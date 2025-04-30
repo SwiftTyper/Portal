@@ -22,8 +22,10 @@ jobs:
         with:
           swift-version: ${{ matrix.swift-version }}
 
-      - name: Build
-        run: swift build
+      - name: Build (iOS)
+        run: |
+          xcodebuild -scheme Portal -destination 'platform=iOS Simulator,name=iPhone 15,OS=latest' build
 
-      - name: Run tests
-        run: swift test
+      - name: Test (iOS)
+        run: |
+          xcodebuild -scheme Portal -destination 'platform=iOS Simulator,name=iPhone 15,OS=latest' test
