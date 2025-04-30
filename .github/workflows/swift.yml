@@ -10,31 +10,27 @@ on:
 jobs:
   build:
     runs-on: macos-latest
-    strategy:
-      fail-fast: false
-      matrix:
-        swift-version: ['6.0'] 
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
 
-      - name: Setup Swift ${{ matrix.swift-version }}
-        uses: SwiftyLab/setup-swift@latest
+      - name: Setup Swift 6.0
+        uses: SwiftyLab/setup-swift@latest 
         with:
-          swift-version: '${{ matrix.swift-version }}'
+          swift-version: '6.0'
 
       - name: Build (iOS Debug)
         run: |
-          xcodebuild -toolchain swift -scheme Portal -destination 'platform=iOS Simulator,name=iPhone 15,OS=18.2' build
+          xcodebuild -toolchain swift -scheme Portal -destination 'platform=iOS Simulator,OS=18.2' build
 
       - name: Test (iOS Debug)
         run: |
-          xcodebuild -toolchain swift -scheme Portal -destination 'platform=iOS Simulator,name=iPhone 15,OS=18.2' test
+          xcodebuild -toolchain swift -scheme Portal -destination 'platform=iOS Simulator,OS=18.2' test
 
       - name: Build (iOS Release)
         run: |
-          xcodebuild -toolchain swift -scheme Portal -configuration Release -destination 'platform=iOS Simulator,name=iPhone 15,OS=18.2' build
+          xcodebuild -toolchain swift -scheme Portal -configuration Release -destination 'platform=iOS Simulator,OS=18.2' build
 
       - name: Test (iOS Release)
         run: |
-          xcodebuild -toolchain swift -scheme Portal -configuration Release -destination 'platform=iOS Simulator,name=iPhone 15,OS=18.2' test
+          xcodebuild -toolchain swift -scheme Portal -configuration Release -destination 'platform=iOS Simulator,OS=18.2' test
