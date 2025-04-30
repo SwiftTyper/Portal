@@ -1,3 +1,4 @@
+#if DEBUG
 import SwiftUI
 
 struct CardInfo: Identifiable {
@@ -251,3 +252,4 @@ struct AnimatedGradient<Content: View>: View {
             }
     }
 }
+#endif
