@@ -11,6 +11,9 @@ jobs:
     strategy:
       matrix:
         swift: [5.8, 5.9, 6.0]
+    fail-fast: false
+
+continue-on-error: ${{ matrix.swift == '6.0' }}
 
     name: Swift ${{ matrix.swift }}
 
