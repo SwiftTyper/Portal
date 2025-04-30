@@ -90,6 +90,7 @@ extension View {
 import UIKit
 
 /// Manages the overlay window for the portal layer.
+@MainActor
 final class OverlayWindowManager {
     static let shared = OverlayWindowManager()
     private var overlayWindow: PassThroughWindow?
