@@ -10,10 +10,7 @@ jobs:
     runs-on: macos-latest
     strategy:
       matrix:
-        swift: [5.8, 5.9, 6.0]
-    fail-fast: false
-
-continue-on-error: ${{ matrix.swift == '6.0' }}
+        swift: [5.8, 5.9] # Remove 6.0 since it's not yet available
 
     name: Swift ${{ matrix.swift }}
 
