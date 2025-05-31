@@ -33,7 +33,7 @@ public struct PortalSource<Content: View>: View {
             }
             .onPreferenceChange(AnchorKey.self) { prefs in
                 MainActor.assumeIsolated {
-                    if let idx = index, portalModel.info[idx].initalized, portalModel.info[idx].sourceAnchor == nil {
+                    if let idx = index, portalModel.info[idx].initalized {
                         portalModel.info[idx].sourceAnchor = prefs[id]
                     }
                 }
@@ -46,7 +46,7 @@ public struct PortalSource<Content: View>: View {
     
     private var opacity: CGFloat {
         guard let idx = index else { return 1 }
-        return portalModel.info[idx].destinationAnchor == nil ? 1 : 0
+        return portalModel.info[idx].destinationAnchor == nil ? 1 : 0.01
     }
 }
 
